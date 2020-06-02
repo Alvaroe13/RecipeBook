@@ -1,8 +1,10 @@
-package com.example.foodrecipemvvm;
+package com.example.foodrecipemvvm.Views;
 
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+
+import com.example.foodrecipemvvm.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;

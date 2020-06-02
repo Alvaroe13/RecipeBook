@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * this object class is the one that will contain all the info detailed when we fetch info from the server
+ */
 public class Recipe implements Parcelable {
 
     @SerializedName("ingredients")

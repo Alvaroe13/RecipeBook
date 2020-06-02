@@ -25,6 +25,7 @@ android {
 
 dependencies {
     def retrofitVersion ="2.5.0";
+    def lifecycle_version = "2.2.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -38,6 +39,11 @@ dependencies {
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    // ViewModel and LiveData
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
 
 
 }
