@@ -28,6 +28,10 @@ public class RecipeListViewModel extends ViewModel {
         return  recipeInfo.fetchRecipes();
     }
 
+    public void connectionWithRepo(String query, int pageNumber){
+        recipeInfo.connectionWithAPI(query, pageNumber);
+    }
+
 
 
 }

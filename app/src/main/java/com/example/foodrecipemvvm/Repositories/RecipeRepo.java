@@ -36,4 +36,12 @@ public class RecipeRepo {
     public LiveData<List<Recipe>> fetchRecipes(){
         return webServiceConnection.infoFromServer();
     }
+
+
+    public void connectionWithAPI(String query, int pageNumber){
+        if (pageNumber == 0 ){
+            pageNumber = 1;
+        }
+        webServiceConnection.setConnectionAPI(query, pageNumber);
+    }
 }
