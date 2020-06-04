@@ -25,8 +25,7 @@ public class RecipeAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<Recipe> recipeList;
     private RecipeOnClickListener recipeOnClickListener;
 
-    public RecipeAdapter(List<Recipe> recipeList, RecipeOnClickListener recipeOnClickListener) {
-        this.recipeList = recipeList;
+    public RecipeAdapter(RecipeOnClickListener recipeOnClickListener) {
         this.recipeOnClickListener = recipeOnClickListener;
     }
 
@@ -60,11 +59,15 @@ public class RecipeAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return recipeList.size();
+        if (recipeList != null){
+            return recipeList.size();
+        }
+        return 0;
+
     }
 
     /**
-     * not explained yet (TODO)
+     * we use this method to pass the info fetched from the API client into the layout
      * @param recipes
      */
     public void setRecipes(List<Recipe> recipes){

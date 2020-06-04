@@ -2,21 +2,29 @@ package com.example.foodrecipemvvm.Views;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.widget.Toast;
 
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
 import com.example.foodrecipemvvm.ViewModels.RecipeListViewModel;
+import com.example.foodrecipemvvm.Views.adapters.RecipeAdapter;
+import com.example.foodrecipemvvm.Views.adapters.RecipeOnClickListener;
 
 import java.util.List;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class RecipeListActivity extends BaseActivity {
+public class RecipeListActivity extends BaseActivity implements RecipeOnClickListener {
 
     private static final String TAG = "RecipeListActivity";
 
+    //ui
+    private RecyclerView recipeRecyclerView;
+    private RecipeAdapter adapter;
+    //vars
     private RecipeListViewModel viewModelRecipeList;
 
 
@@ -27,17 +35,21 @@ public class RecipeListActivity extends BaseActivity {
 
         //init ViewModel
         viewModelRecipeList = new ViewModelProvider(this).get(RecipeListViewModel.class);
+        bindUI();
+        initRecyclerView();
+
         initObserver();
+        testRetrofit();
+    }   
 
+    private void bindUI(){
+        recipeRecyclerView = findViewById(R.id.recipeRecyclerView);
+    }
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked");
-                testRetrofit();
-            }
-        });
-
+    private void initRecyclerView() {
+        recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new RecipeAdapter(this);
+        recipeRecyclerView.setAdapter(adapter);
     }
 
     /**
@@ -50,9 +62,10 @@ public class RecipeListActivity extends BaseActivity {
             @Override
             public void onChanged(List<Recipe> recipes) {
                 if (recipes != null ){
-                    for (Recipe resultRecipes : recipes){
-                        Log.d(TAG, "onChanged: result from the web: " + resultRecipes.getTitle() );
-                    }
+                    Log.d(TAG, "onChanged: we pass the info fetched to the adapter");
+                     adapter.setRecipes(recipes);       
+                } else{
+                    Toast.makeText(RecipeListActivity.this, "info null from the server", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -64,12 +77,24 @@ public class RecipeListActivity extends BaseActivity {
     }
 
 
+    /**
+     * this method contains the logic for fetching info from the server
+     */
     private void testRetrofit() {
         Log.d(TAG, "testRetrofit: called");
         connectionWithViewModel("vegan", 1 ) ;
     }
 
+    
+    @Override
+    public void searchRecipeOnClick(int position) {
+        
+    }
 
+    @Override
+    public void openRecipeOnClick() {
+
+    }
 }
 
 
