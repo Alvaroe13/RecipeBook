@@ -26,6 +26,7 @@ android {
 dependencies {
     def retrofitVersion ="2.5.0";
     def lifecycle_version = "2.2.0"
+    def version = "28.0.0"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -44,6 +45,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+     //cardView
+    implementation "com.android.support:cardview-v7:$version"
+    //recycler
+    implementation "com.android.support:recyclerview-v7:$version"
+
 
 
 }

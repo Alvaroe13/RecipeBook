@@ -21,12 +21,12 @@ public class Recipe implements Parcelable {
     @SerializedName("image_url")
     private String imageUrl;
     @SerializedName("social_rank")
-    private String socialRank;
+    private float socialRank;
 
     public Recipe() {
     }
 
-    public Recipe(String[] ingredients, String publisher, String recipeID, String title, String imageUrl, String socialRank) {
+    public Recipe(String[] ingredients, String publisher, String recipeID, String title, String imageUrl, float socialRank) {
         this.ingredients = ingredients;
         this.publisher = publisher;
         this.recipeID = recipeID;
@@ -35,14 +35,6 @@ public class Recipe implements Parcelable {
         this.socialRank = socialRank;
     }
 
-    protected Recipe(Parcel in) {
-        ingredients = in.createStringArray();
-        publisher = in.readString();
-        recipeID = in.readString();
-        title = in.readString();
-        imageUrl = in.readString();
-        socialRank = in.readString();
-    }
 
 
     public String[] getIngredients() {
@@ -85,17 +77,30 @@ public class Recipe implements Parcelable {
         this.imageUrl = imageUrl;
     }
 
-    public String getSocialRank() {
+    public float getSocialRank() {
         return socialRank;
     }
 
-    public void setSocialRank(String socialRank) {
+    public void setSocialRank(float socialRank) {
         this.socialRank = socialRank;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-    //-------------- method for making this object parcelable
+    //----------------------------------- parcelable methods-----------------------------
 
+
+    protected Recipe(Parcel in) {
+        ingredients = in.createStringArray();
+        publisher = in.readString();
+        recipeID = in.readString();
+        title = in.readString();
+        imageUrl = in.readString();
+        socialRank = in.readFloat();
+    }
 
     public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
         @Override
@@ -109,10 +114,6 @@ public class Recipe implements Parcelable {
         }
     };
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -121,6 +122,11 @@ public class Recipe implements Parcelable {
         dest.writeString(recipeID);
         dest.writeString(title);
         dest.writeString(imageUrl);
-        dest.writeString(socialRank);
+        dest.writeFloat(socialRank);
     }
+
+
+    //-------------- method for making this object parcelable
+
+
 }
