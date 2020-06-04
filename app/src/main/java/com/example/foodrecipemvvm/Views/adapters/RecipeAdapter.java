@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.ViewHolderRecipe;
@@ -43,6 +45,16 @@ public class RecipeAdapter  extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ((ViewHolderRecipe)holder).publisherName.setText(recipeList.get(position).getPublisher());
         //here we cast from float to String and round up the value ad they will come with a bunch of decimals when fetched from the server
         ((ViewHolderRecipe)holder).score.setText(String.valueOf(Math.round(recipeList.get(position).getSocialRank())));
+
+
+        //GLIDE
+        RequestOptions options = new RequestOptions()
+                .placeholder(R.drawable.ic_launcher_background);
+
+        Glide.with(holder.itemView.getContext())
+                .setDefaultRequestOptions(options)
+                .load(recipeList.get(position).getImageUrl())
+                .into(((ViewHolderRecipe)holder).image);
 
     }
 
