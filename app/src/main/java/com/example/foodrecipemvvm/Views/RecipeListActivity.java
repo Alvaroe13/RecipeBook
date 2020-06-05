@@ -83,18 +83,6 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
         viewModelRecipeList.connectionWithRepo(query , pageNumber);
     }
 
-
-    
-    @Override
-    public void searchRecipeOnClick(int position) {
-        
-    }
-
-    @Override
-    public void openRecipeOnClick() {
-
-    }
-
     private void initSearchBar(){
 
         searchView = findViewById(R.id.searchBar);
@@ -114,13 +102,16 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
         });
     }
 
-    /*   *//**
-     * this method contains the logic for fetching info from the server
-     *//*
-    private void testRetrofit() {
-        Log.d(TAG, "testRetrofit: called");
-        connectionWithViewModel("vegan", 1 ) ;
-    }*/
+    @Override
+    public void openRecipeOnClick(int position) {
+
+    }
+
+    @Override
+    public void openCategoryOnClick() {
+
+    }
+
 
 }
 

@@ -39,7 +39,7 @@ public class ViewHolderRecipe extends RecyclerView.ViewHolder implements View.On
     @Override
     public void onClick(View v) {
         //here we get access to the method inside the interface
-        recipeOnClickListener.searchRecipeOnClick(getAdapterPosition());
+        recipeOnClickListener.openRecipeOnClick(getAdapterPosition());
     }
 
 
