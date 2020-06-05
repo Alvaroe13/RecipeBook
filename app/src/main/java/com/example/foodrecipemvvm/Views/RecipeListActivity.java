@@ -102,6 +102,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit: text inserted: " + query);
+                adapter.displayLoading();
                 connectionWithViewModel(query, 1); //we make search for page 1 by default
                 return false;
             }
