@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FoodRecipeMVVM</string>
+    <string name="pasta">Pasta…</string>
 </resources>

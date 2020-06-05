@@ -12,6 +12,7 @@ import com.example.foodrecipemvvm.Views.adapters.RecipeOnClickListener;
 
 import java.util.List;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
     //ui
     private RecyclerView recipeRecyclerView;
     private RecipeAdapter adapter;
+    private SearchView searchView;
     //vars
     private RecipeListViewModel viewModelRecipeList;
 
@@ -39,7 +41,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
         initRecyclerView();
 
         initObserver();
-        testRetrofit();
+        initSearchBar();
     }   
 
     private void bindUI(){
@@ -55,7 +57,8 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
     /**
      * this is the observer observing the observable object in the ViewModel
      * AKA "retrieveRecipeList" method.
-     * this method is called anytime there is a change in the MutableLiveData var in the ViewModel
+     * this method is called anytime there is a change in the MutableLiveData var in the ViewModel and
+     * updates de UI. (THIS METHOD FETCHES INFO COMING FROM THE WEBSERVICE class)
      */
     private void initObserver(){
         viewModelRecipeList.retrieveRecipeList().observe(this, new Observer<List<Recipe>>() {
@@ -71,19 +74,15 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
         });
     }
 
-
+    /**
+     * This method sends info to the Webservice class (going through viewModel/repository classes) when searching for a recipe
+     * @param query
+     * @param pageNumber
+     */
     private void connectionWithViewModel(String query, int pageNumber){
         viewModelRecipeList.connectionWithRepo(query , pageNumber);
     }
 
-
-    /**
-     * this method contains the logic for fetching info from the server
-     */
-    private void testRetrofit() {
-        Log.d(TAG, "testRetrofit: called");
-        connectionWithViewModel("vegan", 1 ) ;
-    }
 
     
     @Override
@@ -95,6 +94,33 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
     public void openRecipeOnClick() {
 
     }
+
+    private void initSearchBar(){
+
+        searchView = findViewById(R.id.searchBar);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit: text inserted: " + query);
+                connectionWithViewModel(query, 1); //we make search for page 1 by default
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    /*   *//**
+     * this method contains the logic for fetching info from the server
+     *//*
+    private void testRetrofit() {
+        Log.d(TAG, "testRetrofit: called");
+        connectionWithViewModel("vegan", 1 ) ;
+    }*/
+
 }
 
 

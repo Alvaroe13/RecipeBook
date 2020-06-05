@@ -13,10 +13,10 @@ import androidx.lifecycle.ViewModel;
  */
 public class RecipeListViewModel extends ViewModel {
 
-    private RecipeRepo recipeInfo;
+    private RecipeRepo recipeRepo;
 
     public RecipeListViewModel() {
-        recipeInfo = RecipeRepo.initInstance();
+        recipeRepo = RecipeRepo.initRepo();
     }
 
     /**
@@ -25,11 +25,16 @@ public class RecipeListViewModel extends ViewModel {
      * @return
      */
     public LiveData<List<Recipe>> retrieveRecipeList(){        //this is an observable
-        return  recipeInfo.fetchRecipes();
+        return  recipeRepo.fetchRecipes();
     }
 
+    /**
+     * pass query coming from view to the repo
+     * @param query
+     * @param pageNumber
+     */
     public void connectionWithRepo(String query, int pageNumber){
-        recipeInfo.connectionWithAPI(query, pageNumber);
+        recipeRepo.connectionWithAPI(query, pageNumber);
     }
 
 

@@ -20,7 +20,7 @@ public class RecipeRepo {
     private WebServiceConnection webServiceConnection;
 
     //singleton pattern
-    public static RecipeRepo initInstance(){
+    public static RecipeRepo initRepo(){
         if (instance == null){
             instance = new RecipeRepo();
         }
@@ -37,7 +37,11 @@ public class RecipeRepo {
         return webServiceConnection.infoFromServer();
     }
 
-
+    /**
+     * pass query coming from viewModel to the WebService class
+     * @param query
+     * @param pageNumber
+     */
     public void connectionWithAPI(String query, int pageNumber){
         if (pageNumber == 0 ){
             pageNumber = 1;

@@ -51,7 +51,11 @@ public class WebServiceConnection    {
         return recipeList;
     }
 
-
+    /**
+     * We execute the query coming from the View/viewModel/Repository classes.
+     * @param query
+     * @param pageNumber
+     */
     public void setConnectionAPI(String query, int pageNumber){
         //we make sure to make this background thread null in case is not
         if (connectionAPIBackground != null){
@@ -62,6 +66,8 @@ public class WebServiceConnection    {
         //we save it's value in this Future var
         final Future handler = AppExecutors.getInstance().getNetworkExecutor().submit(connectionAPIBackground);
 
+
+        //This portion of code handles the TIME_OUT part of the logic of retrieving data from the API client.
         AppExecutors.getInstance().getNetworkExecutor().schedule(new Runnable() {
             @Override
             public void run() {
@@ -72,6 +78,9 @@ public class WebServiceConnection    {
 
     }
 
+    /**
+     * class in charge of creating a background threadPool.
+     */
     private class ConnectionAPIBackground implements Runnable{
 
         private String query;
@@ -89,6 +98,7 @@ public class WebServiceConnection    {
         public void run() {
 
             try {
+                //Response type of var is from Retrofit library
                 Response responseFromNetwork = requestRecipes(query, pageNumber).execute();
 
                 if (cancelRequest){
@@ -99,12 +109,12 @@ public class WebServiceConnection    {
                     List<Recipe> recipe = new ArrayList<>(((RecipeSearchResponse)responseFromNetwork.body()).getRecipes());
                     if (pageNumber == 1){
                         //when we get the page 1 we pass that info to the liveData var
-                        recipeList.postValue(recipe);  // here we set the value in the LiveData var
+                        recipeList.postValue(recipe);  // here we set the value in the LiveData var to be passed to Repo/ViewModel/View
                     } else{
                         //here we store all the recipes already fetched from the API client in a var
                         List<Recipe> currentRecipeList = recipeList.getValue();
                         currentRecipeList.addAll(recipe);
-                        recipeList.postValue(currentRecipeList);    //here we append more recipes in the LiveData
+                        recipeList.postValue(currentRecipeList);    //here we append more recipes in the LiveData to be passed to Repo/ViewModel/View
                     }
                 } else {
                     //if request answer is not 200 something went wrong
@@ -119,6 +129,12 @@ public class WebServiceConnection    {
             }
         }
 
+        /**
+         * Here is where technically we make the connection (request) with the API client
+         * @param query
+         * @param pageNumber
+         * @return
+         */
         private Call<RecipeSearchResponse> requestRecipes(String query, int pageNumber){
             return ServiceRetrofitGenerator.getApi().searchRecipe( query, String.valueOf(pageNumber) );
         }
