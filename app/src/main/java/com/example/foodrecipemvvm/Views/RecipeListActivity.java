@@ -7,8 +7,8 @@ import android.widget.Toast;
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
 import com.example.foodrecipemvvm.ViewModels.RecipeListViewModel;
-import com.example.foodrecipemvvm.Views.adapters.RecipeAdapter;
-import com.example.foodrecipemvvm.Views.adapters.RecipeOnClickListener;
+import com.example.foodrecipemvvm.Views.adapters.MainAdapter;
+import com.example.foodrecipemvvm.Views.adapters.OnClickListeners;
 
 import java.util.List;
 
@@ -18,13 +18,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class RecipeListActivity extends BaseActivity implements RecipeOnClickListener {
+public class RecipeListActivity extends BaseActivity implements OnClickListeners {
 
     private static final String TAG = "RecipeListActivity";
 
     //ui
     private RecyclerView recipeRecyclerView;
-    private RecipeAdapter adapter;
+    private MainAdapter adapter;
     private SearchView searchView;
     //vars
     private RecipeListViewModel viewModelRecipeList;
@@ -42,7 +42,13 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
 
         initObserver();
         initSearchBar();
-    }   
+        if (!viewModelRecipeList.isViewingRecipes()){
+            //show categories view
+            showCategoriesView();
+        }
+    }
+
+
 
     private void bindUI(){
         recipeRecyclerView = findViewById(R.id.recipeRecyclerView);
@@ -50,7 +56,7 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
 
     private void initRecyclerView() {
         recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new RecipeAdapter(this);
+        adapter = new MainAdapter(this);
         recipeRecyclerView.setAdapter(adapter);
     }
 
@@ -108,8 +114,18 @@ public class RecipeListActivity extends BaseActivity implements RecipeOnClickLis
     }
 
     @Override
-    public void openCategoryOnClick() {
+    public void openCategoryOnClick(String category) {
+        adapter.displayLoading();
+        connectionWithViewModel(category, 1); //we make search for page 1 by default
+    }
 
+    /**
+     * this is the view in charge of telling the viewModel that we're showing the categories view
+     * (the one to be open  first by default every time the app is launched).
+     */
+    private void showCategoriesView() {
+        viewModelRecipeList.setViewingRecipes(false);
+        adapter.displayCategories();
     }
 
 

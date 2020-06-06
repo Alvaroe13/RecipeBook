@@ -15,8 +15,11 @@ public class RecipeListViewModel extends ViewModel {
 
     private RecipeRepo recipeRepo;
 
+    private boolean viewingRecipes;
+
     public RecipeListViewModel() {
         recipeRepo = RecipeRepo.initRepo();
+        viewingRecipes = false; //set it as false because this is not the first view to show when user launches the app
     }
 
     /**
@@ -34,9 +37,20 @@ public class RecipeListViewModel extends ViewModel {
      * @param pageNumber
      */
     public void connectionWithRepo(String query, int pageNumber){
+        viewingRecipes = true;
         recipeRepo.connectionWithAPI(query, pageNumber);
     }
 
+
+    //getter
+    public boolean isViewingRecipes() {
+        return viewingRecipes;
+    }
+
+    //setter
+    public void setViewingRecipes(boolean viewingRecipes) {
+        this.viewingRecipes = viewingRecipes;
+    }
 
 
 }
