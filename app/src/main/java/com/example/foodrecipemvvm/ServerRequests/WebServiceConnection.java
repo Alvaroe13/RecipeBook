@@ -30,7 +30,7 @@ public class WebServiceConnection    {
     private MutableLiveData<List<Recipe>> recipeList;
     //needed for the singleton design pattern
     private static WebServiceConnection instance;
-    private ConnectionAPIBackground connectionAPIBackground;
+    private ConnectionAPIBackground backgroundRunnable;
 
     //singleton design pattern
     public static WebServiceConnection initWebService(){
@@ -58,13 +58,13 @@ public class WebServiceConnection    {
      */
     public void setConnectionAPI(String query, int pageNumber){
         //we make sure to make this background thread null in case is not
-        if (connectionAPIBackground != null){
-            connectionAPIBackground = null;
+        if (backgroundRunnable != null){
+            backgroundRunnable = null;
         }
         //then we instantiate this background thread in this thread
-        connectionAPIBackground = new ConnectionAPIBackground(query, pageNumber);
+        backgroundRunnable = new ConnectionAPIBackground(query, pageNumber);
         //we save it's value in this Future var
-        final Future handler = AppExecutors.getInstance().getNetworkExecutor().submit(connectionAPIBackground);
+        final Future handler = AppExecutors.getInstance().getNetworkExecutor().submit(backgroundRunnable);
 
 
         //This portion of code handles the TIME_OUT part of the logic of retrieving data from the API client.
@@ -78,8 +78,21 @@ public class WebServiceConnection    {
 
     }
 
+
     /**
-     * class in charge of creating a background threadPool.
+     * method in charge of telling the runnable to stop performing query to the API client.
+     */
+    public void cancelQuery(){
+        if (backgroundRunnable != null ){
+            backgroundRunnable.stopRequest();
+        }
+    }
+
+
+
+    /**
+     * class in charge of creating a background threadPool and put in motion the query to
+     * the server
      */
     private class ConnectionAPIBackground implements Runnable{
 
@@ -145,9 +158,6 @@ public class WebServiceConnection    {
             cancelRequest = true;
         }
     }
-
-
-
 
 
 }

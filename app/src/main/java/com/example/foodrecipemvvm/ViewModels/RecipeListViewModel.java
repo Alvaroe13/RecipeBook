@@ -16,6 +16,7 @@ public class RecipeListViewModel extends ViewModel {
     private RecipeRepo recipeRepo;
 
     private boolean viewingRecipes;
+    private boolean performingQuery;
 
     public RecipeListViewModel() {
         recipeRepo = RecipeRepo.initRepo();
@@ -38,9 +39,19 @@ public class RecipeListViewModel extends ViewModel {
      */
     public void connectionWithRepo(String query, int pageNumber){
         viewingRecipes = true;
+        performingQuery = true;
         recipeRepo.connectionWithAPI(query, pageNumber);
     }
 
+    //getter
+    public boolean isPerformingQuery() {
+        return performingQuery;
+    }
+
+    //setter
+    public void setPerformingQuery(boolean performingQuery) {
+        this.performingQuery = performingQuery;
+    }
 
     //getter
     public boolean isViewingRecipes() {
@@ -50,6 +61,27 @@ public class RecipeListViewModel extends ViewModel {
     //setter
     public void setViewingRecipes(boolean viewingRecipes) {
         this.viewingRecipes = viewingRecipes;
+    }
+
+    public boolean backButtonPressed(){
+        if (performingQuery){
+            //here we cancel request
+            performingQuery = false;
+            recipeRepo.cancelQuery();
+        }
+        if (viewingRecipes){
+            viewingRecipes = false;
+            return false;
+        }
+        return false;
+    }
+
+    public void loadNextPage(){
+
+        if (!performingQuery && viewingRecipes ){
+            recipeRepo.loadNextPage();
+        }
+
     }
 
 

@@ -94,9 +94,14 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         if (recipeList.get(position).getSocialRank() == -1){
             return CATEGORIES_VIEW_TYPE;
         }
-        if (recipeList.get(position).getTitle().equals("FETCHING...")){
+        else if (recipeList.get(position).getTitle().equals("FETCHING...")){
             return  LOADING_VIEW_TYPE;
-        } else {
+        }
+        else if ( position == recipeList.size() -1 && position != 0 &&
+                         !recipeList.get(position).getTitle().equals("EXHAUSTED...")){
+            //pending to be finished
+            return  LOADING_VIEW_TYPE;
+        }else {
             return RECIPE_VIEW_TYPE;
         }
     }

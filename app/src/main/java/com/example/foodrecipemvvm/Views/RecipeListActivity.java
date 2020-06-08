@@ -12,6 +12,7 @@ import com.example.foodrecipemvvm.Views.adapters.OnClickListeners;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -58,6 +59,21 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
         recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MainAdapter(this);
         recipeRecyclerView.setAdapter(adapter);
+        loadMoreRecipes();
+    }
+
+    private void loadMoreRecipes() {
+        recipeRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    //load next page
+                    viewModelRecipeList.loadNextPage();
+                }
+
+            }
+        });
     }
 
     /**
@@ -71,8 +87,11 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
             @Override
             public void onChanged(List<Recipe> recipes) {
                 if (recipes != null ){
-                    Log.d(TAG, "onChanged: we pass the info fetched to the adapter");
-                     adapter.setRecipes(recipes);       
+                    if (viewModelRecipeList.isViewingRecipes()){
+                        Log.d(TAG, "onChanged: we pass the info fetched to the adapter");
+                        viewModelRecipeList.setPerformingQuery(false);
+                        adapter.setRecipes(recipes);
+                    }
                 } else{
                     Toast.makeText(RecipeListActivity.this, "info null from the server", Toast.LENGTH_SHORT).show();
                 }
@@ -96,6 +115,7 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "onQueryTextSubmit: text inserted: " + query);
+                lossFocusUI();
                 adapter.displayLoading();
                 connectionWithViewModel(query, 1); //we make search for page 1 by default
                 return false;
@@ -115,6 +135,7 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
 
     @Override
     public void openCategoryOnClick(String category) {
+        lossFocusUI();
         adapter.displayLoading();
         connectionWithViewModel(category, 1); //we make search for page 1 by default
     }
@@ -128,7 +149,23 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
         adapter.displayCategories();
     }
 
+    /**
+     * this is to remove focus on UI element once is pressed by the user
+     */
+    private void lossFocusUI(){
+        searchView.clearFocus();
+        searchView.setIconified(true);
+    }
 
+    @Override
+    public void onBackPressed() {
+        if (viewModelRecipeList.backButtonPressed()){
+            super.onBackPressed();
+        } else{
+            showCategoriesView();
+        }
+
+    }
 }
 
 

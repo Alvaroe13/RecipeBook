@@ -16,8 +16,9 @@ public class RecipeRepo {
 
     //var needed for the singleton pattern
     private static RecipeRepo instance;
-
     private WebServiceConnection webServiceConnection;
+    private String queryTitle;
+    private int queryPage;
 
     //singleton pattern
     public static RecipeRepo initRepo(){
@@ -46,6 +47,19 @@ public class RecipeRepo {
         if (pageNumber == 0 ){
             pageNumber = 1;
         }
+
         webServiceConnection.setConnectionAPI(query, pageNumber);
+
+        queryTitle = query;
+        queryPage= pageNumber;
+    }
+
+    public void cancelQuery(){
+        webServiceConnection.cancelQuery();
+    }
+
+
+    public void loadNextPage(){
+        webServiceConnection.setConnectionAPI(queryTitle , queryPage + 1);
     }
 }
