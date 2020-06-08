@@ -1,5 +1,6 @@
 package com.example.foodrecipemvvm.Views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -135,6 +136,11 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
     @Override
     public void openRecipeOnClick(int position) {
 
+        Recipe recipeInfo = adapter.recipeSelected(position);
+
+        Intent intent = new Intent(this, RecipeDetailsActivity.class);
+        intent.putExtra("recipe info", recipeInfo);
+        startActivity(intent);
     }
 
     @Override

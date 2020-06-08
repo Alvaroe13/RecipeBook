@@ -209,4 +209,20 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         recipeList = recipes;
         notifyDataSetChanged();
     }
+
+    /**
+     * method return recipe position, we're going to user this to pass the position of the recipe
+     * selected to the DetailsRecipeActivity.
+     * @param position
+     * @return
+     */
+    public Recipe recipeSelected(int position){
+        if (recipeList != null ){
+            if (recipeList.size() >0 ){
+                return recipeList.get(position);
+            }
+        }
+        return null;
+
+    }
 }
