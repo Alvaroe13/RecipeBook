@@ -11,6 +11,7 @@ import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.CategoryListViewHolder;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.LoadingDottedView;
+import com.example.foodrecipemvvm.Views.adapters.viewHolders.LoadingDottedViewTop;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.ViewHolderRecipe;
 import com.example.foodrecipemvvm.util.Constants;
 
@@ -29,6 +30,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public static final int RECIPE_VIEW_TYPE = 1;
     public static final int LOADING_VIEW_TYPE = 2;
     public static final int CATEGORIES_VIEW_TYPE = 3;
+    public static final int LOADING_VIEW_TOP_TYPE = 4;
 
 
     private List<Recipe> recipeList;
@@ -51,10 +53,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 return new ViewHolderRecipe(layoutView , clickListener);
             case LOADING_VIEW_TYPE:
                 layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_dotted_view, parent, false);
-                return new LoadingDottedView(layoutView );
+                return new LoadingDottedView(layoutView);
             case CATEGORIES_VIEW_TYPE:
                 layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.categories_list, parent, false);
                 return new CategoryListViewHolder(layoutView, clickListener );
+            case LOADING_VIEW_TOP_TYPE:
+            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_dotted_view_top, parent, false);
+            return new LoadingDottedViewTop(layoutView);
             default: {
                 layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_layout, parent, false);
                 return new ViewHolderRecipe(layoutView , clickListener);
@@ -100,7 +105,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         else if ( position == recipeList.size() -1 && position != 0 &&
                          !recipeList.get(position).getTitle().equals("EXHAUSTED...")){
             //pending to be finished
-            return  LOADING_VIEW_TYPE;
+            return  LOADING_VIEW_TOP_TYPE;
         }else {
             return RECIPE_VIEW_TYPE;
         }

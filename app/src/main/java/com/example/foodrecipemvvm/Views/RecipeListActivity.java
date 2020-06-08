@@ -36,25 +36,29 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        //init ViewModel
-        viewModelRecipeList = new ViewModelProvider(this).get(RecipeListViewModel.class);
+        initViewModel();
         bindUI();
         initRecyclerView();
 
         initObserver();
         initSearchBar();
+        setDefaultView();
+
+    }
+
+    private void initViewModel(){
+        viewModelRecipeList = new ViewModelProvider(this).get(RecipeListViewModel.class);
+    }
+    private void bindUI(){
+        recipeRecyclerView = findViewById(R.id.recipeRecyclerView);
+    }
+
+    private void setDefaultView(){
         if (!viewModelRecipeList.isViewingRecipes()){
             //show categories view
             showCategoriesView();
         }
     }
-
-
-
-    private void bindUI(){
-        recipeRecyclerView = findViewById(R.id.recipeRecyclerView);
-    }
-
     private void initRecyclerView() {
         recipeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MainAdapter(this);
