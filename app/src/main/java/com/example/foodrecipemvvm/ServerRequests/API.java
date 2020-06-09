@@ -16,7 +16,7 @@ public interface API {
 
     //Fetch recipe from the server
     @GET("api/get")
-    Call<RecipeResponse> recipeFetched( @Query("rId") String recipeID  );
+    Call<RecipeResponse> fetchRecipe( @Query("rId") String recipeID  );
                                         //?
 
 

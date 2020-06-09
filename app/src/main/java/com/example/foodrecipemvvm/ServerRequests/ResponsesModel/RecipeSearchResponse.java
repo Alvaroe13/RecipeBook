@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * object class for when we get a response from the server when we search for a recipe
+ * object class for when we get a response from the server when we search for a list of recipes
  */
 public class RecipeSearchResponse {
 

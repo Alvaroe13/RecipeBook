@@ -6,13 +6,13 @@ import com.example.foodrecipemvvm.ServerRequests.WebServiceConnection;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 /**
  * this is the layer between the ViewModel and the data source (in this case a webservice using retrofit)
  * this class is observing the "WebServiceConnection" class
  */
 public class RecipeRepo {
+
 
     //var needed for the singleton pattern
     private static RecipeRepo instance;
@@ -35,7 +35,7 @@ public class RecipeRepo {
 
     //connection between the server and the ViewModel
     public LiveData<List<Recipe>> fetchRecipes(){
-        return webServiceConnection.infoFromServer();
+        return webServiceConnection.infoFromServerRecipeList();
     }
 
     /**
@@ -48,7 +48,7 @@ public class RecipeRepo {
             pageNumber = 1;
         }
 
-        webServiceConnection.setConnectionAPI(query, pageNumber);
+        webServiceConnection.setConnectionAPIRecipeList(query, pageNumber);
 
         queryTitle = query;
         queryPage= pageNumber;
@@ -60,6 +60,22 @@ public class RecipeRepo {
 
 
     public void loadNextPage(){
-        webServiceConnection.setConnectionAPI(queryTitle , queryPage + 1);
+        webServiceConnection.setConnectionAPIRecipeList(queryTitle , queryPage + 1);
+    }
+
+    /**
+     * fetch info
+     * @return
+     */
+    public LiveData<Recipe> getRecipeDetails(){
+        return webServiceConnection.infoFromServerRecipe();
+    }
+
+    /**
+     * send query
+     * @param recipeID
+     */
+    public void singleRecipeRequestAPI(String recipeID){
+        webServiceConnection.setConnectionAPIRecipe(recipeID);
     }
 }

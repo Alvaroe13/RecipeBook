@@ -3,6 +3,7 @@ package com.example.foodrecipemvvm.ServerRequests;
 import android.util.Log;
 
 import com.example.foodrecipemvvm.Model.Recipe;
+import com.example.foodrecipemvvm.ServerRequests.ResponsesModel.RecipeResponse;
 import com.example.foodrecipemvvm.ServerRequests.ResponsesModel.RecipeSearchResponse;
 
 import java.io.IOException;
@@ -28,9 +29,11 @@ public class WebServiceConnection    {
 
     // var to store the info fetched from the server
     private MutableLiveData<List<Recipe>> recipeList;
+    private MutableLiveData<Recipe> recipeDetails;
     //needed for the singleton design pattern
     private static WebServiceConnection instance;
     private ConnectionAPIBackground backgroundRunnable;
+    private SingleRecipeRunnable singleRecipeRunnable;
 
     //singleton design pattern
     public static WebServiceConnection initWebService(){
@@ -43,12 +46,17 @@ public class WebServiceConnection    {
     //constructor
     private  WebServiceConnection(){
         recipeList = new MutableLiveData<>();
+        recipeDetails = new MutableLiveData<>();
     }
 
 
     //this LiveData method is the one passing the info from the server to the repository layer
-    public LiveData<List<Recipe>> infoFromServer(){
+    public LiveData<List<Recipe>> infoFromServerRecipeList(){
         return recipeList;
+    }
+
+    public LiveData<Recipe> infoFromServerRecipe(){
+        return recipeDetails;
     }
 
     /**
@@ -56,7 +64,7 @@ public class WebServiceConnection    {
      * @param query
      * @param pageNumber
      */
-    public void setConnectionAPI(String query, int pageNumber){
+    public void setConnectionAPIRecipeList(String query, int pageNumber){
         //we make sure to make this background thread null in case is not
         if (backgroundRunnable != null){
             backgroundRunnable = null;
@@ -78,6 +86,24 @@ public class WebServiceConnection    {
 
     }
 
+    public void setConnectionAPIRecipe(String recipeID){
+        if ( singleRecipeRunnable != null ){
+             singleRecipeRunnable = null;
+        }
+
+        singleRecipeRunnable = new SingleRecipeRunnable(recipeID);
+
+        final Future responseRunnable = AppExecutors.getInstance().getNetworkExecutor().submit(singleRecipeRunnable);
+
+
+        AppExecutors.getInstance().getNetworkExecutor().schedule(new Runnable() {
+            @Override
+            public void run() {
+                responseRunnable.cancel(true);
+            }
+        }, NETWORK_TIME_OUT, TimeUnit.MILLISECONDS);
+    }
+
 
     /**
      * method in charge of telling the runnable to stop performing query to the API client.
@@ -85,6 +111,9 @@ public class WebServiceConnection    {
     public void cancelQuery(){
         if (backgroundRunnable != null ){
             backgroundRunnable.stopRequest();
+        }
+        if (singleRecipeRunnable != null){
+            singleRecipeRunnable.stopRequest();
         }
     }
 
@@ -119,7 +148,7 @@ public class WebServiceConnection    {
                 }
                 if (responseFromNetwork.code() == 200 ){
                     //here we store in the list the info fetched from the API client
-                    List<Recipe> recipe = new ArrayList<>(((RecipeSearchResponse)responseFromNetwork.body()).getRecipes());
+                    List<Recipe> recipe = new ArrayList<>( ((RecipeSearchResponse)responseFromNetwork.body()).getRecipes() );
                     if (pageNumber == 1){
                         //when we get the page 1 we pass that info to the liveData var
                         recipeList.postValue(recipe);  // here we set the value in the LiveData var to be passed to Repo/ViewModel/View
@@ -159,5 +188,65 @@ public class WebServiceConnection    {
         }
     }
 
+
+    /**
+     * class in charge of creating a background threadPool and put in motion the query to
+     * the server
+     */
+    private class SingleRecipeRunnable implements Runnable{
+
+        private String recipeID;
+        boolean cancelRequest;
+
+        public SingleRecipeRunnable(String recipeID ) {
+            this.recipeID = recipeID;
+            cancelRequest = false;
+        }
+
+
+        @Override
+        public void run() {
+
+            try {
+                //Response type of var is from Retrofit library
+                Response responseFromNetwork = getRecipeDetails(recipeID).execute();
+
+                if (cancelRequest){
+                    return;
+                }
+                if (responseFromNetwork.code() == 200 ){
+                    //here we store in the list the info fetched from the API client
+                    Recipe recipeFetched = ((RecipeResponse)responseFromNetwork.body()).getRecipe();
+                    Log.d(TAG, "run: recipeID fetched " + recipeFetched.getRecipeID());
+                    Log.d(TAG, "run: title fetched " + recipeFetched.getTitle());
+                    recipeDetails.postValue(recipeFetched);
+
+                } else {
+                    String error = responseFromNetwork.errorBody().string();
+                    Log.d(TAG, "run: some error occurred: " + error );
+                    recipeList.postValue(null);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(TAG, "run: error in the web: " + e.getMessage());
+            }
+        }
+
+        /**
+         * Here is where technically we make the connection (request) with the API client
+         * @param recipeID
+         * @return
+         */
+        private Call<RecipeResponse> getRecipeDetails(String recipeID){
+            return ServiceRetrofitGenerator.getApi().fetchRecipe(recipeID);
+        }
+
+
+        private void stopRequest(){
+            Log.d(TAG, "stopRequest: request cancelled");
+            cancelRequest = true;
+        }
+    }
 
 }
