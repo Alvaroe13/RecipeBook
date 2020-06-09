@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
+import com.example.foodrecipemvvm.Views.adapters.viewHolders.CategoriesGridLayout;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.CategoryListViewHolder;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.LoadingDottedView;
 import com.example.foodrecipemvvm.Views.adapters.viewHolders.LoadingDottedViewTop;

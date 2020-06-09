@@ -67,6 +67,7 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
         loadMoreRecipes();
     }
 
+
     private void loadMoreRecipes() {
         recipeRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

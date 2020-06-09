@@ -12,9 +12,7 @@ import androidx.lifecycle.ViewModel;
  * class observing the Repository class
  */
 public class RecipeListViewModel extends ViewModel {
-
     private RecipeRepo recipeRepo;
-
     private boolean viewingRecipes;
     private boolean performingQuery;
 
@@ -83,6 +81,8 @@ public class RecipeListViewModel extends ViewModel {
         }
 
     }
+
+
 
 
 }
