@@ -71,7 +71,7 @@ public class RecipeListViewModel extends ViewModel {
             viewingRecipes = false;
             return false;
         }
-        return false;
+        return true;
     }
 
     public void loadNextPage(){

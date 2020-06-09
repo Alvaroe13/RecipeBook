@@ -171,8 +171,10 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
     @Override
     public void onBackPressed() {
         if (viewModelRecipeList.backButtonPressed()){
+            Log.d(TAG, "onBackPressed: closed window");
             super.onBackPressed();
         } else{
+            Log.d(TAG, "onBackPressed: stay in the view");
             showCategoriesView();
         }
 
