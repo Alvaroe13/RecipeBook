@@ -2,11 +2,15 @@ package com.example.foodrecipemvvm.Views;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
 import com.example.foodrecipemvvm.ViewModels.RecipeDetailsViewModel;
@@ -46,7 +50,7 @@ public class RecipeDetailsActivity extends BaseActivity {
         imageRecipe = findViewById(R.id.recipe_image);
         titleRecipe = findViewById(R.id.recipe_title);
         socialRankRecipe = findViewById(R.id.recipe_social_score);
-        detailsContainer = findViewById(R.id.container);
+        detailsContainer = findViewById(R.id.ingredients_container);
         scrollView = findViewById(R.id.parent);
         descriptionRecipe = findViewById(R.id.recipe_details);
 
@@ -76,17 +80,47 @@ public class RecipeDetailsActivity extends BaseActivity {
                         Log.d(TAG, "onChanged: recipe info fetched: "  + recipe.getTitle() );
                         Log.d(TAG, "onChanged: recipe info fetched: "  + recipe.getRecipeID() );
                         Log.d(TAG, "onChanged: ----------------------------------------------");
-                        for (String ingredient : recipe.getIngredients()){
-                            Log.d(TAG, "onChanged: ingredient: " + ingredient);
-                        }
-                    }  else{
-                        Log.d(TAG, "onChanged: another recipe retrieved");
+                        setRecipeView(recipe);
                     }
                 }else{
                     Log.d(TAG, "onChanged: info came back null");
                 }
             }
         });
+    }
+
+    private void setRecipeView(Recipe recipe) {
+
+        //GLIDE
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .error(R.drawable.ic_launcher_background);
+
+        Glide.with(this)
+                .setDefaultRequestOptions(options)
+                .load(recipe.getImageUrl())
+                .into(imageRecipe);
+
+        // set the text
+        titleRecipe.setText(recipe.getTitle());
+        socialRankRecipe.setText(String.valueOf(  Math.round(recipe.getSocialRank())  ));
+
+        detailsContainer.removeAllViews();
+        for ( String ingredients : recipe.getIngredients()){
+            TextView textView = new TextView(this);
+            textView.setText(ingredients);
+            textView.setTextSize(15);
+            textView.setLayoutParams( new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT ,
+                                                                            ViewGroup.LayoutParams.WRAP_CONTENT));
+            detailsContainer.addView(textView);
+        }
+
+        showParent();
+
+    }
+
+    private void showParent() {
+        scrollView.setVisibility(View.VISIBLE);
     }
 
     private void requestRecipe(String recipeID){
