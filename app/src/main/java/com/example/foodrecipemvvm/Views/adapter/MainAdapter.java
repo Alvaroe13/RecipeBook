@@ -1,4 +1,4 @@
-package com.example.foodrecipemvvm.Views.adapters;
+package com.example.foodrecipemvvm.Views.adapter;
 
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -9,11 +9,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
-import com.example.foodrecipemvvm.Views.adapters.viewHolders.CategoriesGridLayout;
-import com.example.foodrecipemvvm.Views.adapters.viewHolders.CategoryListViewHolder;
-import com.example.foodrecipemvvm.Views.adapters.viewHolders.LoadingDottedView;
-import com.example.foodrecipemvvm.Views.adapters.viewHolders.LoadingDottedViewTop;
-import com.example.foodrecipemvvm.Views.adapters.viewHolders.ViewHolderRecipe;
+import com.example.foodrecipemvvm.Views.adapter.viewHolders.CategoryListViewHolder;
+import com.example.foodrecipemvvm.Views.adapter.viewHolders.LoadingDottedView;
+import com.example.foodrecipemvvm.Views.adapter.viewHolders.LoadingDottedViewTop;
+import com.example.foodrecipemvvm.Views.adapter.viewHolders.ViewHolderRecipe;
 import com.example.foodrecipemvvm.util.Constants;
 
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public static final int LOADING_VIEW_TYPE = 2;
     public static final int CATEGORIES_VIEW_TYPE = 3;
     public static final int LOADING_VIEW_TOP_TYPE = 4;
+    public static final int RECIPES_EXHAUSTED_TYPE = 5;
 
 
     private List<Recipe> recipeList;
@@ -59,8 +59,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.categories_list, parent, false);
                 return new CategoryListViewHolder(layoutView, clickListener );
             case LOADING_VIEW_TOP_TYPE:
-            layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_dotted_view_top, parent, false);
-            return new LoadingDottedViewTop(layoutView);
+                layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.loading_dotted_view_top, parent, false);
+                return new LoadingDottedViewTop(layoutView);
+            case RECIPES_EXHAUSTED_TYPE:
+                layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.query_exhausted_view, parent, false);
+                return new LoadingDottedViewTop(layoutView);
             default: {
                 layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.recipe_layout, parent, false);
                 return new ViewHolderRecipe(layoutView , clickListener);
@@ -102,6 +105,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
         else if (recipeList.get(position).getTitle().equals("FETCHING...")){
             return  LOADING_VIEW_TYPE;
+        }
+        else if (recipeList.get(position).getTitle().equals("EXHAUSTED...")){
+            return  RECIPES_EXHAUSTED_TYPE;
         }
         else if ( position == recipeList.size() -1 && position != 0 &&
                          !recipeList.get(position).getTitle().equals("EXHAUSTED...")){
@@ -183,6 +189,25 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             loadingList.add(recipe);
             recipeList = loadingList;
             notifyDataSetChanged();
+        }
+    }
+
+    public void displayRecipesExhausted(){
+        removeLoading();
+        Recipe recipeExhausted = new Recipe();
+        recipeExhausted.setTitle("EXHAUSTED...");
+        recipeList.add(recipeExhausted);
+        notifyDataSetChanged();
+
+    }
+
+    private void removeLoading(){
+        if (isLoading()){
+            for (Recipe recipeIterator : recipeList){
+                if (recipeIterator.getTitle().equals("LOADING...")){
+                    recipeList.remove(recipeIterator);
+                }
+            }
         }
     }
 

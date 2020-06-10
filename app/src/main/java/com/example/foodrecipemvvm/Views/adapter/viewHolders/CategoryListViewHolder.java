@@ -1,10 +1,10 @@
-package com.example.foodrecipemvvm.Views.adapters.viewHolders;
+package com.example.foodrecipemvvm.Views.adapter.viewHolders;
 
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.foodrecipemvvm.R;
-import com.example.foodrecipemvvm.Views.adapters.OnClickListeners;
+import com.example.foodrecipemvvm.Views.adapter.OnClickListeners;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;

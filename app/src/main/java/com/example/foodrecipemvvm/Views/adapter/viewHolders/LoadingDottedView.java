@@ -1,4 +1,4 @@
-package com.example.foodrecipemvvm.Views.adapters.viewHolders;
+package com.example.foodrecipemvvm.Views.adapter.viewHolders;
 
 import android.view.View;
 

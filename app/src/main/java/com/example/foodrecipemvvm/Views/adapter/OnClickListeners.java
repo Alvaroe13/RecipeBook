@@ -1,4 +1,4 @@
-package com.example.foodrecipemvvm.Views.adapters;
+package com.example.foodrecipemvvm.Views.adapter;
 
 public interface OnClickListeners {
 

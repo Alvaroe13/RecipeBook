@@ -41,13 +41,38 @@ public class RecipeRepo {
         initMediators();
     }
 
+    //Here lies the logic (single source of truth) (remote and local data source)
+    public void initMediators(){
+        LiveData<List<Recipe>> recipesFromServer = webServiceConnection.infoFromServerRecipeList();
+        mediator.addSource(recipesFromServer, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                if (recipes != null){
+                    mediator.setValue(recipes);
+                    queryExhausted(recipes);
+                } else{
+                    queryExhausted(null);
+                    //we use room library to make the query
+                }
+            }
+        });
+    }
+
+    public void queryExhausted(List<Recipe> list){
+        if (list != null){
+            if (list.size() % 30 != 0 ){
+                queryExhausted.setValue(true);
+            }
+        } else {
+            queryExhausted.setValue(true);
+        }
+    }
+
     //connection between the server and the ViewModel
     public LiveData<List<Recipe>> fetchRecipes(){
         return mediator;
 
     }
-
-
 
     /**
      * pass query coming from viewModel to the WebService class
@@ -97,31 +122,7 @@ public class RecipeRepo {
         return webServiceConnection.networkError();
     }
 
-    public void initMediators(){
-        LiveData<List<Recipe>> recipesFromServer = webServiceConnection.infoFromServerRecipeList();
-        mediator.addSource(recipesFromServer, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(List<Recipe> recipes) {
-                if (recipes != null){
-                    mediator.setValue(recipes);
-                    queryDone(recipes);
-                } else{
-                    queryDone(null);
-                    //we use room library to make the query
-                }
-            }
-        });
-    }
 
-    public void queryDone(List<Recipe> list){
-        if (list != null){
-            if (list.size() < 30 ){
-                queryExhausted.setValue(true);
-            }
-        } else {
-            queryExhausted.setValue(true);
-        }
-    }
 
     public MutableLiveData<Boolean> getQueryExhausted() {
         return queryExhausted;

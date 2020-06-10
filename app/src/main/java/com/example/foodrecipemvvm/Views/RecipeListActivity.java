@@ -3,13 +3,12 @@ package com.example.foodrecipemvvm.Views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.foodrecipemvvm.Model.Recipe;
 import com.example.foodrecipemvvm.R;
 import com.example.foodrecipemvvm.ViewModels.RecipeListViewModel;
-import com.example.foodrecipemvvm.Views.adapters.MainAdapter;
-import com.example.foodrecipemvvm.Views.adapters.OnClickListeners;
+import com.example.foodrecipemvvm.Views.adapter.MainAdapter;
+import com.example.foodrecipemvvm.Views.adapter.OnClickListeners;
 
 import java.util.List;
 
@@ -107,6 +106,7 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean){
                     Log.d(TAG, "onChanged: query exhausted");
+                  adapter.displayRecipesExhausted();
                 }
             }
         });
