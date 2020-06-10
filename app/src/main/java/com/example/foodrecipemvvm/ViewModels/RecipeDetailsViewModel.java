@@ -10,9 +10,11 @@ public class RecipeDetailsViewModel extends ViewModel {
 
     private RecipeRepo recipeRepo;
     private String recipeIDRequested;
+    private boolean recipeFetched;
 
     public RecipeDetailsViewModel() {
         recipeRepo = RecipeRepo.initRepo();
+        recipeFetched = false;
     }
 
 
@@ -27,5 +29,17 @@ public class RecipeDetailsViewModel extends ViewModel {
 
     public String getRecipeIDRequested() {
         return recipeIDRequested;
+    }
+
+    public LiveData<Boolean> networkTimedOut(){
+        return recipeRepo.getNetworkTimedOut();
+    }
+
+    public boolean isRecipeFetched() {
+        return recipeFetched;
+    }
+
+    public void setRecipeFetched(boolean recipeRetrieved) {
+        recipeFetched = recipeRetrieved;
     }
 }

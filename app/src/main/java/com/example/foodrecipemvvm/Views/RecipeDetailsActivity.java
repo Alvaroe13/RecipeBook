@@ -71,6 +71,7 @@ public class RecipeDetailsActivity extends BaseActivity {
     }
 
     private void observeViewModel(){
+        //observes executor retrieving app info
         viewModel.retrieveRecipeDetails().observe(this, new Observer<Recipe>() {
             @Override
             public void onChanged(Recipe recipe) {
@@ -81,13 +82,25 @@ public class RecipeDetailsActivity extends BaseActivity {
                         Log.d(TAG, "onChanged: recipe info fetched: "  + recipe.getRecipeID() );
                         Log.d(TAG, "onChanged: ----------------------------------------------");
                         setRecipeView(recipe);
+                        viewModel.setRecipeFetched(true);
                     }
-                }else{
-                    Log.d(TAG, "onChanged: info came back null");
                 }
             }
         });
+
+        //observes executor retrieving a network time out
+        viewModel.networkTimedOut().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean && !viewModel.isRecipeFetched() ){
+                        showErrorScreen();
+                }
+            }
+        });
+
+
     }
+
 
     private void setRecipeView(Recipe recipe) {
 
@@ -116,6 +129,30 @@ public class RecipeDetailsActivity extends BaseActivity {
         }
 
         showParent();
+
+    }
+
+    private void showErrorScreen(){
+
+        //GLIDE
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .error(R.drawable.ic_launcher_background);
+
+        Glide.with(this)
+                .setDefaultRequestOptions(options)
+                .load(R.drawable.ic_launcher_background)
+                .into(imageRecipe);
+
+        // set the text
+        titleRecipe.setText("Error with the network...");
+        socialRankRecipe.setText("");
+        TextView textView = new TextView(this);
+        textView.setTextSize(15);
+        textView.setText("Error retrieving ingredients...");
+        textView.setLayoutParams( new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT ,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        detailsContainer.addView(textView);
 
     }
 

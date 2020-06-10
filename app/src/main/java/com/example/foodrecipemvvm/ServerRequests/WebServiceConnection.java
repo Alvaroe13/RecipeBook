@@ -30,8 +30,10 @@ public class WebServiceConnection    {
     // var to store the info fetched from the server
     private MutableLiveData<List<Recipe>> recipeList;
     private MutableLiveData<Recipe> recipeDetails;
+    private MutableLiveData<Boolean> networkTimedOut = new MutableLiveData<>();
     //needed for the singleton design pattern
     private static WebServiceConnection instance;
+    //background threads
     private ConnectionAPIBackground backgroundRunnable;
     private SingleRecipeRunnable singleRecipeRunnable;
 
@@ -57,6 +59,10 @@ public class WebServiceConnection    {
 
     public LiveData<Recipe> infoFromServerRecipe(){
         return recipeDetails;
+    }
+
+    public LiveData<Boolean> networkError(){
+        return networkTimedOut;
     }
 
     /**
@@ -96,9 +102,11 @@ public class WebServiceConnection    {
         final Future responseRunnable = AppExecutors.getInstance().getNetworkExecutor().submit(singleRecipeRunnable);
 
 
+        networkTimedOut.setValue(false);
         AppExecutors.getInstance().getNetworkExecutor().schedule(new Runnable() {
             @Override
             public void run() {
+                networkTimedOut.postValue(true);
                 responseRunnable.cancel(true);
             }
         }, NETWORK_TIME_OUT, TimeUnit.MILLISECONDS);
@@ -224,7 +232,7 @@ public class WebServiceConnection    {
                 } else {
                     String error = responseFromNetwork.errorBody().string();
                     Log.d(TAG, "run: some error occurred: " + error );
-                    recipeList.postValue(null);
+                    recipeDetails.postValue(null);
                 }
 
             } catch (IOException e) {

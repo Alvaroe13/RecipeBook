@@ -14,6 +14,7 @@ import androidx.lifecycle.LiveData;
 public class RecipeRepo {
 
 
+
     //var needed for the singleton pattern
     private static RecipeRepo instance;
     private WebServiceConnection webServiceConnection;
@@ -78,4 +79,11 @@ public class RecipeRepo {
     public void singleRecipeRequestAPI(String recipeID){
         webServiceConnection.setConnectionAPIRecipe(recipeID);
     }
+
+    public LiveData<Boolean> getNetworkTimedOut(){
+        return webServiceConnection.networkError();
+    }
+
+
+
 }
