@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
  * class observing the Repository class
  */
 public class RecipeListViewModel extends ViewModel {
+
     private RecipeRepo recipeRepo;
     private boolean viewingRecipes;
     private boolean performingQuery;
@@ -28,6 +29,10 @@ public class RecipeListViewModel extends ViewModel {
      */
     public LiveData<List<Recipe>> retrieveRecipeList(){        //this is an observable
         return  recipeRepo.fetchRecipes();
+    }
+
+    public LiveData<Boolean> queryExhausted(){
+        return recipeRepo.getQueryExhausted();
     }
 
     /**
@@ -76,7 +81,7 @@ public class RecipeListViewModel extends ViewModel {
 
     public void loadNextPage(){
 
-        if (!performingQuery && viewingRecipes ){
+        if (!performingQuery && viewingRecipes && !queryExhausted().getValue() ){
             recipeRepo.loadNextPage();
         }
 

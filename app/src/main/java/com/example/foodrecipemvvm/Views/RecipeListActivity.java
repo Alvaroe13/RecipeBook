@@ -98,8 +98,15 @@ public class RecipeListActivity extends BaseActivity implements OnClickListeners
                         viewModelRecipeList.setPerformingQuery(false);
                         adapter.setRecipes(recipes);
                     }
-                } else{
-                    Toast.makeText(RecipeListActivity.this, "info null from the server", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        viewModelRecipeList.queryExhausted().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean){
+                    Log.d(TAG, "onChanged: query exhausted");
                 }
             }
         });

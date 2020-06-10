@@ -6,6 +6,9 @@ import com.example.foodrecipemvvm.ServerRequests.WebServiceConnection;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 /**
  * this is the layer between the ViewModel and the data source (in this case a webservice using retrofit)
@@ -14,6 +17,9 @@ import androidx.lifecycle.LiveData;
 public class RecipeRepo {
 
 
+    //single source of truth
+    private MutableLiveData<Boolean> queryExhausted = new MutableLiveData<>();
+    private MediatorLiveData<List<Recipe>> mediator = new MediatorLiveData<>();
 
     //var needed for the singleton pattern
     private static RecipeRepo instance;
@@ -32,12 +38,16 @@ public class RecipeRepo {
     //constructor
     private RecipeRepo(){
         webServiceConnection = WebServiceConnection.initWebService();  //singleton of class observed
+        initMediators();
     }
 
     //connection between the server and the ViewModel
     public LiveData<List<Recipe>> fetchRecipes(){
-        return webServiceConnection.infoFromServerRecipeList();
+        return mediator;
+
     }
+
+
 
     /**
      * pass query coming from viewModel to the WebService class
@@ -48,11 +58,14 @@ public class RecipeRepo {
         if (pageNumber == 0 ){
             pageNumber = 1;
         }
-
-        webServiceConnection.setConnectionAPIRecipeList(query, pageNumber);
-
         queryTitle = query;
         queryPage= pageNumber;
+        queryExhausted.setValue(false);
+
+        webServiceConnection.infoFromServerRecipeList();
+        webServiceConnection.setConnectionAPIRecipeList(query, pageNumber);
+
+
     }
 
     public void cancelQuery(){
@@ -84,6 +97,39 @@ public class RecipeRepo {
         return webServiceConnection.networkError();
     }
 
+    public void initMediators(){
+        LiveData<List<Recipe>> recipesFromServer = webServiceConnection.infoFromServerRecipeList();
+        mediator.addSource(recipesFromServer, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                if (recipes != null){
+                    mediator.setValue(recipes);
+                    queryDone(recipes);
+                } else{
+                    queryDone(null);
+                    //we use room library to make the query
+                }
+            }
+        });
+    }
+
+    public void queryDone(List<Recipe> list){
+        if (list != null){
+            if (list.size() < 30 ){
+                queryExhausted.setValue(true);
+            }
+        } else {
+            queryExhausted.setValue(true);
+        }
+    }
+
+    public MutableLiveData<Boolean> getQueryExhausted() {
+        return queryExhausted;
+    }
+
+    public void setQueryExhausted(MutableLiveData<Boolean> queryExhausted) {
+        this.queryExhausted = queryExhausted;
+    }
 
 
 }
